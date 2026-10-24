@@ -1,0 +1,12 @@
+{
+  "title": "HIBOSS 产品演示",
+  "description": "HIBOSS 产品前端交互演示，可体验活动、会议、资源与个人页面。",
+  "language": "zh-CN",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

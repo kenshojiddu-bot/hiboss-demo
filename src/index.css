@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&display=swap');
+@import 'tailwindcss';
+
+/* `static` keeps every token emitted, since inline SVG styles and custom classes read them via var(). */
+@theme static {
+  --font-sans: 'PingFang SC', 'Noto Sans SC', 'Source Han Sans SC', 'Microsoft YaHei', system-ui, sans-serif;
+  --font-display: 'Outfit', 'PingFang SC', system-ui, sans-serif;
+
+  --color-ink: #0b1324;
+  --color-ink-2: #1b2540;
+  --color-muted: #5b6478;
+  --color-subtle: #9aa3b5;
+  --color-line: #e8ebf2;
+  --color-canvas: #f2f4f9;
+  --color-chip: #f1f3f8;
+
+  --color-brand: #2e5bff;
+  --color-brand-2: #14b8d4;
+  --color-brand-soft: #eaf0ff;
+
+  --color-accent: #f79009;
+  --color-accent-ink: #b54708;
+  --color-accent-soft: #fff5e6;
+
+  /* Violet marks everything the AI twin says or generates. */
+  --color-ai: #7a5af8;
+  --color-ai-ink: #5b3fd6;
+  --color-ai-soft: #f2efff;
+
+  --color-success: #12b76a;
+  --color-success-soft: #e7f8ef;
+  --color-danger: #f04438;
+  --color-danger-soft: #feeceb;
+
+  --shadow-card: 0 1px 2px rgba(11, 19, 36, 0.04), 0 10px 30px -18px rgba(11, 19, 36, 0.28);
+}
+
+/* Atmosphere colors live outside @theme so they are always emitted for the custom classes below. */
+:root {
+  --aurora-1: #c9d8ff;
+  --aurora-2: #bdeff6;
+  --aurora-3: #e3dbff;
+}
+
+/* Alternate palettes: every utility reads these variables, so a scope swap restyles the whole prototype. */
+[data-theme='gold'] {
+  --color-ink: #16130f;
+  --color-ink-2: #2a241c;
+  --color-brand: #a8772a;
+  --color-brand-2: #d9b25f;
+  --color-brand-soft: #f6efe2;
+  --color-canvas: #f5f3ee;
+  --color-chip: #f0ece4;
+  --color-line: #e9e3d8;
+  --aurora-1: #f1e2c0;
+  --aurora-2: #ece5d6;
+  --aurora-3: #e7dbc7;
+}
+[data-theme='teal'] {
+  --color-brand: #0e9f8e;
+  --color-brand-2: #4fcf9f;
+  --color-brand-soft: #e2f6f1;
+  --aurora-1: #c3eee2;
+  --aurora-2: #d8f4c8;
+  --aurora-3: #cbe9f5;
+}
+
+@layer base {
+  body {
+    color: var(--color-ink);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+
+.aurora {
+  background:
+    radial-gradient(60% 60% at 8% 8%, var(--aurora-1), transparent 70%),
+    radial-gradient(55% 55% at 96% 4%, var(--aurora-2), transparent 70%),
+    radial-gradient(50% 50% at 60% 46%, var(--aurora-3), transparent 72%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent);
+  mask-image: linear-gradient(to bottom, #000 55%, transparent);
+}
+.text-gradient {
+  background: linear-gradient(90deg, var(--color-brand), var(--color-brand-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.shimmer {
+  background: linear-gradient(90deg, var(--color-chip) 25%, #fff 50%, var(--color-chip) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s linear infinite;
+}
+
+@keyframes shimmer { from { background-position: 200% 0 } to { background-position: -200% 0 } }
+@keyframes shake { 0%,100% { transform: translateX(0) } 25% { transform: translateX(-6px) } 75% { transform: translateX(6px) } }
+@keyframes pop { 0% { transform: scale(0) } 70% { transform: scale(1.12) } 100% { transform: scale(1) } }
+@keyframes slidein { from { transform: translateX(20px); opacity: 0 } to { transform: none; opacity: 1 } }
+@keyframes slideback { from { transform: translateX(-16px); opacity: 0.5 } to { transform: none; opacity: 1 } }
+@keyframes fadein { from { opacity: 0 } to { opacity: 1 } }
+@keyframes toastin { from { transform: translateY(-8px); opacity: 0 } to { transform: none; opacity: 1 } }
+@keyframes fadeup { from { transform: translateY(10px); opacity: 0 } to { transform: none; opacity: 1 } }
+@keyframes halo { 0% { transform: scale(0.85); opacity: 0.7 } 100% { transform: scale(1.6); opacity: 0 } }
