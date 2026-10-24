@@ -21,21 +21,6 @@ const TABS = [
 const tabNames: string[] = TABS.map((t) => t[0])
 const TAB_TITLE: Record<string, string> = { events: '活动', biz: '商机', resources: '资源', me: '我的' }
 
-const THEMES = [
-  ['ocean', '海蓝极光', '#2e5bff', '#14b8d4'],
-  ['gold', '墨金商务', '#a8772a', '#d9b25f'],
-  ['teal', '青碧清新', '#0e9f8e', '#4fcf9f'],
-] as const
-
-const INDEX: [string, [string, Route][]][] = [
-  ['建档', [['启动与登录', { name: 'login' }], ['建档三步', { name: 'onboard' }], ['画像生成', { name: 'portrait' }]]],
-  ['日报', [['今日日报', { name: 'home' }], ['日报详情', { name: 'daily', params: 'd1' }], ['信息源管理', { name: 'sources' }]]],
-  ['活动', [['活动列表', { name: 'events' }], ['活动详情', { name: 'event', params: 'e1' }], ['我的票券', { name: 'ticket', params: 'e2' }]]],
-  ['商机', [['商机广场', { name: 'biz' }], ['发布供需', { name: 'publish' }], ['发布结果', { name: 'published', params: 'my1' }], ['商机详情', { name: 'bizDetail', params: 'b1' }], ['我的发布', { name: 'biz', params: 'mine' }], ['会议日程', { name: 'biz', params: 'meet' }]]],
-  ['资源', [['出海 Agent', { name: 'resources', params: 'ai' }], ['Agent 对话', { name: 'agent' }], ['真人 Agent', { name: 'resources', params: 'human' }], ['真人 Agent 详情', { name: 'human', params: 'h1' }], ['出海资源库', { name: 'resources', params: 'lib' }], ['服务商详情', { name: 'provider', params: 'p1' }], ['出海朋友圈', { name: 'resources', params: 'moments' }]]],
-  ['我的', [['我的', { name: 'me' }], ['我的画像', { name: 'myPortrait' }], ['企业认证', { name: 'cert' }], ['消息通知', { name: 'messages' }]]],
-]
-
 /** Routes whose content runs under the status bar (they handle their own top spacing). */
 const FULL_BLEED = ['login', 'onboard', 'portrait', 'published']
 /** Surface behind the status strip and nav bar for non-tab routes; everything else sits on the canvas. */
@@ -77,8 +62,6 @@ const PARENT: Record<string, (params: any) => Route> = {
 }
 /** The route preceded by its ancestors, root first. */
 const trail = (r: Route): Route[] => { const up = PARENT[r.name]; return up ? [...trail(up(r.params)), r] : [r] }
-/** Tabs that need a signed-in user; activities and resources can be browsed as a guest. */
-const GUARDED = ['home', 'biz', 'me']
 
 /** A page in the back stack. Its key identifies it for as long as it stays in the stack, even when its params change. */
 type Entry = Route & { key: number }
@@ -114,7 +97,6 @@ export default function App() {
   const [posts, setPosts] = useState<Post[]>([...myPostSeeds, ...seedPosts])
   const [meetings, setMeetings] = useState<Meeting[]>(seedMeetings)
   const [moments, setMoments] = useState<Moment[]>(momentSeeds)
-  const [theme, setTheme] = useState<string>('ocean')
   const [scrolled, setScrolled] = useState(false)
   const [overlay, setOverlay] = useState<HTMLDivElement | null>(null)
   const t = useRef<ReturnType<typeof setTimeout>>(undefined)
@@ -227,56 +209,12 @@ export default function App() {
     moments, setMoments,
   }
 
-  /** Opens a page from the prototype index with the back stack a user would have built getting there. */
-  const jump = (r: Route) => {
-    const s = trail(norm(r))
-    const page = s[s.length - 1]
-    if (GUARDED.includes(s[0].name)) setGuest(false)
-    // A ticket only exists after registering, so opening one cold registers for that event first.
-    if (page.name === 'ticket') register(page.params)
-    reset(s)
-  }
-
   return (
     <Ctx.Provider value={store}>
-      <div data-theme={theme} className="relative flex min-h-screen items-center justify-center gap-12 overflow-hidden bg-[#e8ecf4] p-6 text-ink">
-        <div aria-hidden className="aurora pointer-events-none absolute inset-0 opacity-80" />
+      <div data-theme="ocean" className="relative flex min-h-dvh items-center justify-center overflow-hidden bg-canvas text-ink sm:bg-[#e8ecf4] sm:p-6">
+        <div aria-hidden className="aurora pointer-events-none absolute inset-0 hidden opacity-80 sm:block" />
 
-        <aside className="relative hidden w-72 shrink-0 lg:block">
-          <div className="flex items-center gap-2.5">
-            <div className="grid h-10 w-10 place-items-center rounded-2xl bg-ink font-display text-[14px] font-bold text-white">HB</div>
-            <div className="leading-tight"><div className="text-[14px] font-semibold">HIBOSS 海老板</div><div className="text-[12px] text-muted">V1 小程序 · 交互原型</div></div>
-          </div>
-          <h1 className="mt-6 text-[28px] font-bold leading-[34px] tracking-tight">每个页面<br />都能点着走</h1>
-
-          <p className="mt-6 text-[12px] font-medium text-muted">界面配色</p>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {THEMES.map(([k, name, c1, c2]) => (
-              <button key={k} onClick={() => setTheme(k)} className={`flex h-9 items-center gap-2 rounded-full border px-3 text-[12px] transition ${theme === k ? 'border-ink bg-white font-semibold' : 'border-white/0 bg-white/60 text-muted hover:bg-white'}`}>
-                <span className="h-4 w-4 rounded-full" style={{ background: `linear-gradient(135deg, ${c1}, ${c2})` }} />{name}
-              </button>
-            ))}
-          </div>
-
-          <nav className="no-scrollbar mt-6 max-h-[46vh] space-y-4 overflow-y-auto pr-2">
-            {INDEX.map(([group, items]) => (
-              <div key={group}>
-                <p className="mb-1 px-3 text-[11px] font-medium tracking-wide text-subtle">{group}</p>
-                {items.map(([name, r]) => {
-                  const on = same(cur, r)
-                  return (
-                    <button key={name} onClick={() => jump(r)} className={`flex w-full items-center rounded-xl px-3 py-1.5 text-left text-[13px] transition ${on ? 'bg-white font-semibold shadow-sm' : 'text-ink/80 hover:bg-white/60'}`}>
-                      {name}{group === '商机' && name === '发布供需' && <span className="ml-2 rounded-full bg-brand px-1.5 text-[10px] font-medium text-white">新</span>}
-                    </button>
-                  )
-                })}
-              </div>
-            ))}
-          </nav>
-          <div className="mt-5 rounded-2xl bg-white/60 p-3 text-[11px] leading-4 text-muted">认证状态：<b className="text-ink">{cert}</b>。在「企业认证」页可切换，会影响活动报名、服务商联系和真人 Agent 预约。</div>
-        </aside>
-
-        <div className="relative h-[812px] w-[375px] shrink-0 overflow-hidden rounded-[48px] bg-canvas shadow-[0_40px_100px_-30px_rgba(11,19,36,0.45)] ring-[10px] ring-[#0b0d12]">
+        <div className="relative h-dvh w-full max-w-[375px] shrink-0 overflow-hidden bg-canvas sm:h-[812px] sm:w-[375px] sm:rounded-[48px] sm:shadow-[0_40px_100px_-30px_rgba(11,19,36,0.45)] sm:ring-[10px] sm:ring-[#0b0d12]">
           {!fullBleed && <div className={`absolute inset-x-0 top-0 h-11 ${toneBg[tone]}`} />}
 
           <div className={`pointer-events-none absolute inset-x-0 top-0 z-[75] flex h-11 items-center justify-between px-7 text-[15px] font-semibold ${darkTop ? 'text-white' : 'text-ink'}`}>
