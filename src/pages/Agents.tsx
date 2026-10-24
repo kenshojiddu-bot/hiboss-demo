@@ -218,6 +218,7 @@ export function HumanAgentDetail({ id }: { id: string }) {
 
 type Msg = { role: 'user' | 'ai'; text: string; full?: string; sources?: string[]; follow?: string[]; unknown?: boolean; typing?: boolean }
 const HISTORY: [string, string, string][] = [['印尼清真认证流程', 'a2', '1 天前'], ['沙特 VAT 申报', 'a3', '2 天前'], ['越南设厂选址', 'a5', '3 天前']]
+const ALL_SOURCES = '__all_sources__'
 
 /** Chat with one country × industry agent. Questions it cannot answer go to a human agent instead of being guessed. */
 export default function AgentChat({ params }: { params?: { id?: string; q?: string } | string }) {
@@ -281,7 +282,7 @@ export default function AgentChat({ params }: { params?: { id?: string; q?: stri
   return (
     <div className="flex h-full flex-col bg-canvas">
       <div className="flex h-11 shrink-0 items-center gap-2 border-b border-line/70 bg-white px-3">
-        <button onClick={back} aria-label="返回" className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-line bg-white"><ChevronLeft size={18} /></button>
+        <button onClick={back} aria-label="返回上一页" title="返回上一页" className="inline-flex h-8 shrink-0 items-center gap-0.5 rounded-full border border-line bg-white pl-1 pr-2 text-[13px] font-medium"><ChevronLeft size={18} />返回</button>
         <button onClick={() => setPick(true)} aria-label="切换 Agent" className="flex min-w-0 items-center gap-1.5">
           <AgentMark a={agent} size={28} badge={false} />
           <span className="truncate text-[15px] font-semibold">{agent.country}·{agent.industry} Agent</span>
@@ -317,7 +318,7 @@ export default function AgentChat({ params }: { params?: { id?: string; q?: stri
                 <div className="rounded-[20px] rounded-tl-md border border-line/70 bg-white px-4 py-3 text-[15px] leading-[23px] shadow-card">
                   <p className={expand !== i && m.text.length > 90 && !m.typing ? 'line-clamp-3' : ''}>{m.text.split(/([①②③])/).map((s, j) => /[①②③]/.test(s) ? <button key={j} onClick={() => setOpenSrc(m.sources?.['①②③'.indexOf(s)] ?? null)} className="mx-0.5 font-bold text-ai">{s}</button> : s)}{m.typing && <span className="ml-0.5 inline-block h-4 w-1.5 animate-pulse rounded-full bg-ai align-middle" />}</p>
                   {!m.typing && m.text.length > 90 && <button onClick={() => setExpand(expand === i ? null : i)} className="mt-1 text-[13px] font-medium text-brand">{expand === i ? '收起' : '展开全部'}</button>}
-                  {m.sources && <div className="mt-3 space-y-1 border-t border-line/70 pt-2">{m.sources.map((s, j) => <button key={s} onClick={() => setOpenSrc(s)} className="block text-left text-[11px] text-muted"><span className="text-ai">{'①②③'[j]}</span> {s}</button>)}</div>}
+                  {m.sources && <button onClick={() => setOpenSrc(ALL_SOURCES)} className="mt-2 inline-flex h-7 items-center gap-1 rounded-full bg-chip px-2.5 text-[11px] text-muted"><span className="text-ai">来源</span><span>{m.sources.length} 条</span><ChevronRight size={12} /></button>}
                   {m.unknown && !m.typing && (human
                     ? <Btn kind="secondary" onClick={() => push({ name: 'human', params: human.id })} className="mt-3 w-full"><UserRound size={16} />转给真人 Agent · {human.name}</Btn>
                     : <Btn kind="secondary" onClick={() => push({ name: 'provider', params: agent.provider })} className="mt-3 w-full">咨询{provider?.name ?? '服务商'}</Btn>)}
@@ -365,10 +366,16 @@ export default function AgentChat({ params }: { params?: { id?: string; q?: stri
           )
         })}
       </Sheet>
-      <Sheet open={!!openSrc} onClose={() => setOpenSrc(null)} title="来源">
-        <p className="text-[15px] font-bold">{openSrc}</p>
-        <p className="mt-2 text-[13px] text-muted">发布于 2026-11-02 · 已由平台核验，可在信息源管理中查看。</p>
-        <Btn kind="secondary" onClick={() => toast('即将打开原文')} className="mt-4 w-full">查看原文</Btn>
+      <Sheet open={!!openSrc} onClose={() => setOpenSrc(null)} title={openSrc === ALL_SOURCES ? '回答来源' : '来源'}>
+        {openSrc === ALL_SOURCES ? (
+          <div className="divide-y divide-line/70">
+            {[...new Set(msgs.flatMap((m) => m.sources ?? []))].map((source, i) => <button key={source} onClick={() => setOpenSrc(source)} className="flex w-full items-start gap-3 py-3 text-left"><span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-ai-soft text-[12px] font-semibold text-ai-ink">{'①②③'[i] ?? i + 1}</span><span className="text-[14px] font-medium leading-5">{source}</span></button>)}
+          </div>
+        ) : <>
+          <p className="text-[15px] font-bold">{openSrc}</p>
+          <p className="mt-2 text-[13px] text-muted">发布于 2026-11-02 · 已由平台核验，可在信息源管理中查看。</p>
+          <Btn kind="secondary" onClick={() => toast('即将打开原文')} className="mt-4 w-full">查看原文</Btn>
+        </>}
       </Sheet>
     </div>
   )
