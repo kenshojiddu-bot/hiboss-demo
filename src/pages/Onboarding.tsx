@@ -89,7 +89,7 @@ export default function Onboard() {
   return (
     <div ref={topRef} className="relative min-h-full pb-36">
       <Aurora className="h-[300px]" />
-      <div className={`sticky top-0 z-20 pt-11 transition-colors duration-200 ${scrolled ? 'border-b border-line/60 bg-canvas/80 backdrop-blur-xl' : ''}`}>
+      <div className={`sticky top-0 z-20 pt-2 transition-colors duration-200 ${scrolled ? 'border-b border-line/60 bg-canvas/80 backdrop-blur-xl' : ''}`}>
         <div className="flex h-11 items-center gap-2.5 pl-3 pr-[104px]">
           <button onClick={() => (step ? go(step - 1) : back())} aria-label="上一步" className="grid h-8 w-8 place-items-center rounded-full border border-line bg-white"><ChevronLeft size={18} /></button>
           <span className="font-display text-[13px] font-semibold">{step + 1}<span className="text-subtle"> / 3</span></span>

@@ -61,7 +61,7 @@ export default function Biz({ initial }: { initial?: string }) {
   return (
     <div className="relative">
       <Aurora className="h-[300px]" />
-      <div className="relative px-4 pt-[96px]">
+      <div className="relative px-4 pt-[72px]">
         <Segmented
           items={[
             { key: 'plaza', label: '广场' },
@@ -106,7 +106,7 @@ function Plaza() {
         </label>
       </div>
 
-      <div className="sticky top-[88px] z-20 mt-2 space-y-2 bg-canvas/85 py-2.5 backdrop-blur-xl">
+      <div className="sticky top-16 z-20 mt-2 space-y-2 bg-canvas/85 py-2.5 backdrop-blur-xl">
         <div className="flex items-center gap-2 px-4">
           <div className="flex rounded-full bg-ink/[0.06] p-0.5">
             {TYPES.map((t) => <button key={t} onClick={() => setType(t)} className={`h-8 rounded-full px-3.5 text-[13px] transition ${type === t ? 'bg-white font-semibold shadow-[0_2px_8px_-3px_rgba(11,19,36,0.25)]' : 'text-muted'}`}>{t}</button>)}
@@ -197,7 +197,7 @@ function MyPosts() {
         </div>
       </div>
 
-      <div className="sticky top-[88px] z-20 mt-2 bg-canvas/85 py-2.5 backdrop-blur-xl">
+      <div className="sticky top-16 z-20 mt-2 bg-canvas/85 py-2.5 backdrop-blur-xl">
         <div className="no-scrollbar flex gap-2 overflow-x-auto px-4">
           {(['全部', '审核中', '已发布', '已下架', '已过期'] as const).map((s) => {
             const n = s === '全部' ? mine.length : mine.filter((p) => p.status === s).length

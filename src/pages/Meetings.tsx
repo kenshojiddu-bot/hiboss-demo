@@ -102,7 +102,7 @@ export function MeetingsPanel() {
 
   return (
     <>
-      <div className="sticky top-[88px] z-20 mt-2 flex items-center gap-2 bg-canvas/85 py-2.5 pl-4 backdrop-blur-xl">
+      <div className="sticky top-16 z-20 mt-2 flex items-center gap-2 bg-canvas/85 py-2.5 pl-4 backdrop-blur-xl">
         <div className="no-scrollbar flex flex-1 gap-2 overflow-x-auto">
           {(['全部', '待确认', '已确认', '已完成', '已取消'] as Filter[]).map((s) => <Tag key={s} active={f === s} onClick={() => setF(s)}>{s}{s !== '全部' && count(s) > 0 && <span className="ml-1 font-display opacity-60">{count(s)}</span>}</Tag>)}
         </div>

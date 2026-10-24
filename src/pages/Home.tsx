@@ -27,8 +27,8 @@ export default function Home() {
   return (
     <div className="relative">
       <Aurora />
-      <div className="relative px-4 pt-[96px]">
-        <div className="font-display text-[12px] font-semibold tracking-[0.14em] text-muted">NOV 09 · 周一</div>
+      <div className="relative px-4 pt-[72px]">
+        <div className="font-display text-[12px] font-semibold tracking-[0.14em] text-muted">{new Intl.DateTimeFormat('zh-CN', { month: 'long', day: 'numeric', weekday: 'long' }).format(new Date())}</div>
         <h1 className="mt-1.5 text-[30px] font-bold leading-[38px] tracking-tight">
           {state === '首次进入' ? <>明早 8:00<br />送达第一份日报</> : <>今天有 <span className="text-gradient font-display">{visible.length}</span> 条<br />跟你有关</>}
         </h1>
@@ -45,13 +45,6 @@ export default function Home() {
             </button>
           ))}
         </div>
-      </div>
-
-      <div className="no-scrollbar mt-4 flex items-center gap-1.5 overflow-x-auto px-4">
-        <span className="shrink-0 text-[11px] text-subtle">演示状态</span>
-        {(['有内容', '无新内容', '首次进入', '加载中', '网络失败'] as HomeState[]).map((s) => (
-          <button key={s} onClick={() => setState(s)} className={`h-6 shrink-0 rounded-full border border-dashed px-2 text-[11px] ${state === s ? 'border-ink bg-ink text-white' : 'border-line text-muted'}`}>{s}</button>
-        ))}
       </div>
 
       {state === '网络失败' && (

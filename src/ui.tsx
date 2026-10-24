@@ -50,7 +50,7 @@ export const useStore = () => useContext(Ctx)
 /** False while a page is kept alive underneath another one in the navigation stack. */
 export const PageCtx = createContext(true)
 
-/** Renders into the phone-level overlay layer so sheets and bars stay pinned regardless of page scroll. Covered pages render nothing there. */
+/** Renders into the viewport overlay layer so sheets and bars stay pinned regardless of page scroll. Covered pages render nothing there. */
 export const Portal = ({ children }: { children: ReactNode }) => {
   const { overlay } = useStore()
   const active = useContext(PageCtx)
@@ -102,7 +102,7 @@ export const Card = ({ children, className = '', onClick }: { children: ReactNod
 export const toneBg: Record<Tone, string> = { light: 'bg-white', canvas: 'bg-canvas', dark: 'bg-ink' }
 const toneGlass: Record<Tone, string> = { light: 'bg-white/80', canvas: 'bg-canvas/80', dark: 'bg-ink/80' }
 
-/** 44px title row under the 44px status strip; turns translucent with a divider once the page scrolls. */
+/** Page title row; turns translucent with a divider once the page scrolls. */
 export const NavBar = ({ title, right, tone }: { title: string; right?: ReactNode; tone?: Tone }) => {
   const { back, scrolled, tone: routeTone } = useStore()
   const t = tone ?? routeTone
@@ -111,7 +111,7 @@ export const NavBar = ({ title, right, tone }: { title: string; right?: ReactNod
     <div className={`sticky top-0 z-20 flex h-11 items-center justify-center border-b transition-colors duration-200 ${scrolled ? `${toneGlass[t]} backdrop-blur-xl ${dark ? 'border-white/10' : 'border-line/70'}` : `${toneBg[t]} border-transparent`} ${dark ? 'text-white' : 'text-ink'}`}>
       <button onClick={back} aria-label="返回" className={`absolute left-3 grid h-8 w-8 place-items-center rounded-full border ${dark ? 'border-white/15 bg-white/10' : 'border-line bg-white'}`}><ChevronLeft size={18} /></button>
       <span className="text-[16px] font-semibold">{title}</span>
-      {right && <div className="absolute right-[100px] flex items-center">{right}</div>}
+      {right && <div className="absolute right-4 flex items-center">{right}</div>}
     </div>
   )
 }
@@ -194,7 +194,7 @@ export const Confirm = ({ open, text, onOk, onCancel, okText = '确定', danger 
 /** Bottom action bar pinned to the phone frame; pages add bottom padding so content is not covered. */
 export const BottomBar = ({ children, className = '' }: { children: ReactNode; className?: string }) => (
   <Portal>
-    <div className={`pointer-events-auto absolute inset-x-0 bottom-0 z-30 flex items-center gap-3 border-t border-line/70 bg-white/85 px-4 pb-8 pt-3 backdrop-blur-xl ${className}`}>{children}</div>
+    <div className={`bottom-action pointer-events-auto absolute bottom-0 z-30 flex items-center gap-3 border-t border-line/70 bg-white/90 px-4 pb-3 pt-3 backdrop-blur-xl ${className}`}>{children}</div>
   </Portal>
 )
 

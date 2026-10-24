@@ -35,7 +35,7 @@ export default function Me() {
   return (
     <div className="relative">
       <Aurora />
-      <div className="relative px-4 pt-[96px]">
+      <div className="relative px-4 pt-[72px]">
         <div onClick={() => push({ name: 'myPortrait' })} className="flex cursor-pointer items-center gap-3.5">
           <Avatar src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=70" text={profile.name} size={64} className="border-4 border-white shadow-card" />
           <div className="min-w-0 flex-1">

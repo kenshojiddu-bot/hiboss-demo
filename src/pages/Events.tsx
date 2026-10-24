@@ -49,7 +49,7 @@ export default function Events() {
   return (
     <div className="relative">
       <Aurora className="h-[280px]" />
-      <div className="relative px-4 pt-[96px]">
+      <div className="relative px-4 pt-[72px]">
         <Segmented
           items={[{ key: 'all', label: '全部活动' }, { key: 'mine', label: <>我的报名{registered.length > 0 && <span className="ml-1 font-display text-brand">{registered.length}</span>}</> }]}
           value={mine ? 'mine' : 'all'}
@@ -57,7 +57,7 @@ export default function Events() {
         />
       </div>
 
-      <div className="sticky top-[88px] z-20 mt-2 flex items-center gap-2 bg-canvas/85 px-4 py-2.5 backdrop-blur-xl">
+      <div className="sticky top-16 z-20 mt-2 flex items-center gap-2 bg-canvas/85 px-4 py-2.5 backdrop-blur-xl">
         <Drop label="城市" value={city} onPick={(v) => reload(() => setCity(v))} opts={['深圳', '上海', '杭州', '线上', '迪拜', '胡志明']} />
         <Drop label="形式" value={form} onPick={(v) => reload(() => setForm(v))} opts={['线上', '线下', '展会', '考察']} />
         <Drop label="门槛" value={gate} onPick={(v) => reload(() => setGate(v))} opts={['公开', '需认证', '需付费', '邀请制']} />

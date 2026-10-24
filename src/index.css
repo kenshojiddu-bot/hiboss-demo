@@ -74,7 +74,14 @@
 
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { scrollbar-width: none; }
-
+.top-action { right: max(1rem, calc((100vw - 1040px) / 2 + 1rem)); }
+.bottom-safe { bottom: max(0.75rem, env(safe-area-inset-bottom)); }
+.bottom-action {
+  left: 50%;
+  width: min(100%, 1040px);
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+}
 .aurora {
   background:
     radial-gradient(60% 60% at 8% 8%, var(--aurora-1), transparent 70%),

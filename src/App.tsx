@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react'
-import { Newspaper, CalendarDays, Handshake, LayoutGrid, UserRound, Bell, Signal, Wifi, BatteryFull } from 'lucide-react'
-import { Aurora, Btn, Capsule, Ctx, Orb, PageCtx, ToastView, toneBg, useStore, type CertState, type Profile, type Route, type Tone } from './ui'
+import { Newspaper, CalendarDays, Handshake, LayoutGrid, UserRound, Bell } from 'lucide-react'
+import { Aurora, Btn, Ctx, Orb, PageCtx, ToastView, useStore, type CertState, type Profile, type Route, type Tone } from './ui'
 import { meetings as seedMeetings, momentSeeds, myPostSeeds, seedPosts, type Meeting, type Moment, type Post } from './data'
 import Onboard, { Login, Portrait } from './pages/Onboarding'
 import Home, { DailyDetail, Sources } from './pages/Home'
@@ -21,9 +21,7 @@ const TABS = [
 const tabNames: string[] = TABS.map((t) => t[0])
 const TAB_TITLE: Record<string, string> = { events: '活动', biz: '商机', resources: '资源', me: '我的' }
 
-/** Routes whose content runs under the status bar (they handle their own top spacing). */
-const FULL_BLEED = ['login', 'onboard', 'portrait', 'published']
-/** Surface behind the status strip and nav bar for non-tab routes; everything else sits on the canvas. */
+/** Surface behind the navigation bar for non-tab routes. */
 const TONE: Record<string, Tone> = { ticket: 'dark', daily: 'light', doc: 'light', agent: 'light' }
 /** Old expert profiles: two became 真人 Agent, the other two now sit under the firms they work for. */
 const EXPERT: Record<string, Route> = { x1: { name: 'human', params: 'h5' }, x2: { name: 'human', params: 'h4' }, x3: { name: 'provider', params: 'p1' }, x4: { name: 'provider', params: 'p8' } }
@@ -84,7 +82,7 @@ function GuestBlock() {
 }
 
 export default function App() {
-  const [stack, setStack] = useState<Entry[]>(() => [entry({ name: 'login' })])
+  const [stack, setStack] = useState<Entry[]>(() => [entry({ name: 'home' })])
   const [motion, setMotion] = useState<Motion>('fade')
   const [toastMsg, setToastMsg] = useState<string | null>(null)
   const [cert, setCert] = useState<CertState>('未认证')
@@ -161,9 +159,7 @@ export default function App() {
 
   const cur = stack[stack.length - 1]
   const isTab = tabNames.includes(cur.name)
-  const fullBleed = isTab || FULL_BLEED.includes(cur.name)
   const tone: Tone = TONE[cur.name] ?? 'canvas'
-  const darkTop = !fullBleed && tone === 'dark'
   const h = new Date().getHours()
   const greet = h < 12 ? '早上好' : h < 18 ? '下午好' : '晚上好'
 
@@ -211,22 +207,12 @@ export default function App() {
 
   return (
     <Ctx.Provider value={store}>
-      <div data-theme="ocean" className="relative flex min-h-dvh items-center justify-center overflow-hidden bg-canvas text-ink sm:bg-[#e8ecf4] sm:p-6">
-        <div aria-hidden className="aurora pointer-events-none absolute inset-0 hidden opacity-80 sm:block" />
-
-        <div className="relative h-dvh w-full max-w-[375px] shrink-0 overflow-hidden bg-canvas sm:h-[812px] sm:w-[375px] sm:rounded-[48px] sm:shadow-[0_40px_100px_-30px_rgba(11,19,36,0.45)] sm:ring-[10px] sm:ring-[#0b0d12]">
-          {!fullBleed && <div className={`absolute inset-x-0 top-0 h-11 ${toneBg[tone]}`} />}
-
-          <div className={`pointer-events-none absolute inset-x-0 top-0 z-[75] flex h-11 items-center justify-between px-7 text-[15px] font-semibold ${darkTop ? 'text-white' : 'text-ink'}`}>
-            <span className="font-display tabular-nums">9:41</span>
-            <span className="absolute left-1/2 top-2.5 h-[26px] w-[100px] -translate-x-1/2 rounded-full bg-black" />
-            <span className="flex items-center gap-1"><Signal size={15} strokeWidth={2.5} /><Wifi size={15} strokeWidth={2.5} /><BatteryFull size={20} strokeWidth={2} /></span>
-          </div>
-          <Capsule dark={darkTop} />
+      <div data-theme="ocean" className="relative h-dvh overflow-hidden bg-canvas text-ink">
+        <div className="relative h-full w-full overflow-hidden bg-canvas">
 
           {isTab && (
-            <div className={`absolute inset-x-0 top-0 z-30 h-[88px] pt-11 transition-colors duration-200 ${scrolled ? 'border-b border-line/60 bg-canvas/80 backdrop-blur-xl' : ''}`}>
-              <div className="flex h-11 items-center gap-2.5 pl-4 pr-[148px]">
+            <div className={`absolute inset-x-0 top-0 z-30 h-16 transition-colors duration-200 ${scrolled ? 'border-b border-line/60 bg-canvas/85 backdrop-blur-xl' : ''}`}>
+              <div className="mx-auto flex h-16 max-w-[1040px] items-center gap-2.5 px-4 pr-28">
                 {cur.name === 'home' && !guest ? (
                   <>
                     <Orb size={32} />
@@ -235,7 +221,7 @@ export default function App() {
                 ) : <span className="text-[20px] font-bold tracking-tight">{TAB_TITLE[cur.name] ?? '日报'}</span>}
               </div>
               {!guest && cur.name !== 'me' && (
-                <button onClick={() => push({ name: 'messages' })} aria-label="消息" className="absolute right-[104px] top-[50px] grid h-8 w-8 place-items-center rounded-full border border-black/10 bg-white/70 backdrop-blur">
+                  <button onClick={() => push({ name: 'messages' })} aria-label="消息" className="top-action absolute top-4 grid h-8 w-8 place-items-center rounded-full border border-black/10 bg-white/70 backdrop-blur">
                   <Bell size={16} /><span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-danger" />
                 </button>
               )}
@@ -254,16 +240,16 @@ export default function App() {
                   onScroll={on ? (e) => setScrolled(e.currentTarget.scrollTop > 8) : undefined}
                   inert={!on}
                   aria-hidden={!on}
-                  className={`no-scrollbar absolute inset-x-0 bottom-0 overflow-x-hidden ${root || FULL_BLEED.includes(r.name) ? 'top-0' : 'top-11'} ${chat ? 'overflow-hidden' : 'overflow-y-auto'} ${on ? '' : 'pointer-events-none invisible'}`}
+                  className={`no-scrollbar absolute inset-x-0 bottom-0 top-0 overflow-x-hidden ${chat ? 'overflow-hidden' : 'overflow-y-auto'} ${on ? '' : 'pointer-events-none invisible'}`}
                 >
-                  <div className={`min-h-full ${on ? MOTION[motion] : ''} ${root ? 'pb-[112px]' : ''}`} style={chat ? { height: '100%' } : undefined}>{render(r)}</div>
+                  <div className={`mx-auto min-h-full max-w-[1040px] ${on ? MOTION[motion] : ''} ${root ? 'pb-[112px]' : ''}`} style={chat ? { height: '100%' } : undefined}>{render(r)}</div>
                 </div>
               </PageCtx.Provider>
             )
           })}
 
           {isTab && (
-            <nav className="absolute inset-x-3 bottom-[22px] z-30 grid h-[62px] grid-cols-5 rounded-[26px] border border-white/80 bg-white/80 px-1 shadow-[0_14px_36px_-14px_rgba(11,19,36,0.4)] backdrop-blur-xl">
+            <nav className="bottom-safe absolute left-1/2 z-30 grid h-[62px] w-[calc(100%-24px)] max-w-[480px] -translate-x-1/2 grid-cols-5 rounded-[26px] border border-white/80 bg-white/90 px-1 shadow-[0_14px_36px_-14px_rgba(11,19,36,0.4)] backdrop-blur-xl">
               {TABS.map(([k, label, I]) => {
                 const on = cur.name === k
                 return (
@@ -278,7 +264,6 @@ export default function App() {
           )}
 
           <div ref={setOverlay} className="pointer-events-none absolute inset-0 z-50" />
-          <span className={`pointer-events-none absolute bottom-2 left-1/2 z-[80] h-[5px] w-[134px] -translate-x-1/2 rounded-full ${darkTop ? 'bg-white' : 'bg-ink'}`} />
           <ToastView msg={toastMsg} />
         </div>
       </div>

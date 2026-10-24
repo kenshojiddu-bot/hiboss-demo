@@ -38,7 +38,7 @@ export default function Resources({ initial }: { initial?: string }) {
   return (
     <div ref={top} className="relative">
       <Aurora className="h-[300px]" />
-      <div className="relative px-4 pt-[96px]">
+      <div className="relative px-4 pt-[72px]">
         <Segmented
           items={[{ key: 'agent', label: '出海 Agent' }, { key: 'lib', label: '出海资源库' }, { key: 'moments', label: '出海朋友圈' }]}
           value={area}
@@ -88,7 +88,7 @@ function ProviderList() {
   const list = providers.filter((p) => (cat === '全部' || p.cat === cat) && (!onlyCert || p.cert) && (area === '全部' || p.area.includes(area)))
   return (
     <>
-      <div className="sticky top-[88px] z-20 flex items-center gap-2 bg-canvas/85 py-2.5 pl-4 backdrop-blur-xl">
+      <div className="sticky top-16 z-20 flex items-center gap-2 bg-canvas/85 py-2.5 pl-4 backdrop-blur-xl">
         <div className="no-scrollbar flex flex-1 gap-2 overflow-x-auto">{['全部', ...providerCats].map((c) => <Tag key={c} active={cat === c} onClick={() => setCat(c)}>{c}</Tag>)}</div>
         <button onClick={() => setFilter(true)} aria-label="筛选" className={`mr-4 grid h-8 w-8 shrink-0 place-items-center rounded-full border ${onlyCert || area !== '全部' ? 'border-ink bg-ink text-white' : 'border-line bg-white'}`}><SlidersHorizontal size={15} /></button>
       </div>
