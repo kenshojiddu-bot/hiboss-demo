@@ -67,6 +67,16 @@ type Motion = 'push' | 'back' | 'fade'
 const MOTION: Record<Motion, string> = { push: 'animate-[slidein_.28s_ease-out]', back: 'animate-[slideback_.24s_ease-out]', fade: 'animate-[fadein_.2s_ease-out]' }
 let seq = 0
 const entry = (r: Route): Entry => ({ ...norm(r), key: ++seq })
+const PROFILE_STORAGE_KEY = 'hiboss.demo.profile'
+const EMPTY_PROFILE: Profile = { name: '', title: '', city: '深圳', company: '', countries: [], topics: [], stage: '' }
+const loadProfile = (): Profile | null => {
+  try {
+    const value = localStorage.getItem(PROFILE_STORAGE_KEY)
+    return value ? { ...EMPTY_PROFILE, ...JSON.parse(value) } : null
+  } catch {
+    return null
+  }
+}
 
 function GuestBlock() {
   const { setGuest, reset } = useStore()
@@ -82,7 +92,7 @@ function GuestBlock() {
 }
 
 export default function App() {
-  const [stack, setStack] = useState<Entry[]>(() => [entry({ name: 'home' })])
+  const [stack, setStack] = useState<Entry[]>(() => [entry({ name: loadProfile() ? 'home' : 'onboard' })])
   const [motion, setMotion] = useState<Motion>('fade')
   const [toastMsg, setToastMsg] = useState<string | null>(null)
   const [cert, setCert] = useState<CertState>('未认证')
@@ -91,7 +101,7 @@ export default function App() {
   const [favs, setFavs] = useState<string[]>([])
   const [leads, setLeads] = useState<{ name: string; note: string; time: string }[]>([])
   const [feedback, setFb] = useState<Record<string, 'up' | 'down' | 'hide'>>({})
-  const [profile, setProfile] = useState<Profile>({ name: '林海', title: '总经理', city: '深圳', company: '深圳海鲸家居科技有限公司', countries: ['东南亚', '中东'], topics: ['政策合规', '认证与准入', '渠道与买家'], stage: '已出海要增长' })
+  const [profile, setProfile] = useState<Profile>(() => loadProfile() ?? EMPTY_PROFILE)
   const [posts, setPosts] = useState<Post[]>([...myPostSeeds, ...seedPosts])
   const [meetings, setMeetings] = useState<Meeting[]>(seedMeetings)
   const [moments, setMoments] = useState<Moment[]>(momentSeeds)
@@ -197,7 +207,10 @@ export default function App() {
     favs, toggleFav: (id: string) => setFavs((f) => (f.includes(id) ? f.filter((x) => x !== id) : [...f, id])),
     leads, addLead: (name: string, note: string) => setLeads((l) => [{ name, note, time: '刚刚' }, ...l]),
     feedback, setFeedback: (id: string, v: 'up' | 'down' | 'hide') => setFb((f) => ({ ...f, [id]: v })),
-    profile, setProfile,
+    profile, setProfile: (p: Profile) => {
+      setProfile(p)
+      try { localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(p)) } catch { /* Storage may be unavailable in private browsing. */ }
+    },
     posts, addPost, updatePost,
     meetings,
     addMeeting: (m: Meeting) => setMeetings((ms) => [m, ...ms]),

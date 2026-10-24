@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { BatteryCharging, Bot, ChevronDown, ChevronLeft, ChevronRight, Coffee, Cog, Flower2, History, Info, Lock, MapPin, MessageCircle, Mic, Send, ShieldCheck, Smartphone, Sofa, Square, Star, UserRound, Wand2, type LucideIcon } from 'lucide-react'
+import { BatteryCharging, Bot, ChevronDown, ChevronLeft, ChevronRight, Coffee, Cog, Flower2, History, House, Info, Lock, MapPin, MessageCircle, Mic, Send, ShieldCheck, Smartphone, Sofa, Square, Star, UserRound, Wand2, type LucideIcon } from 'lucide-react'
 import { BottomBar, Btn, Card, CertBadge, Empty, LeadSheet, NavBar, Sheet, Tag, useStore, type Profile } from '../ui'
 import { agentCountries, agentIndustries, aiAgents, humanAgents, providers, type AiAgent, type HumanAgent } from '../data'
 
@@ -221,7 +221,7 @@ const HISTORY: [string, string, string][] = [['印尼清真认证流程', 'a2', 
 
 /** Chat with one country × industry agent. Questions it cannot answer go to a human agent instead of being guessed. */
 export default function AgentChat({ params }: { params?: { id?: string; q?: string } | string }) {
-  const { push, back, toast, profile } = useStore()
+  const { push, back, tab, toast, profile } = useStore()
   // Older links passed the question itself as the route param.
   const p = typeof params === 'string' ? { id: undefined, q: params } : params ?? {}
   const mine = myAgents(profile).map((a) => a.id)
@@ -287,7 +287,8 @@ export default function AgentChat({ params }: { params?: { id?: string; q?: stri
           <span className="truncate text-[15px] font-semibold">{agent.country}·{agent.industry} Agent</span>
           <ChevronDown size={15} className="shrink-0 text-muted" />
         </button>
-        <button onClick={() => setHist(true)} aria-label="历史会话" className="ml-auto mr-[96px] grid h-8 w-8 shrink-0 place-items-center rounded-full text-muted hover:bg-chip"><History size={18} /></button>
+        <button onClick={() => setHist(true)} aria-label="历史会话" title="历史会话" className="ml-auto grid h-8 w-8 shrink-0 place-items-center rounded-full text-muted hover:bg-chip"><History size={18} /></button>
+        <button onClick={() => tab('home')} aria-label="回到日报首页" title="回到日报首页" className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full border border-line bg-white px-3 text-[13px] font-medium"><House size={15} />首页</button>
       </div>
       <div className="no-scrollbar flex-1 overflow-y-auto px-4 py-4">
         {!msgs.length && (
