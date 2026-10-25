@@ -281,7 +281,7 @@ export default function AgentChat({ params }: { params?: { id?: string; q?: stri
 
   return (
     <div className="flex h-full flex-col bg-canvas">
-      <div className="flex h-11 shrink-0 items-center gap-2 border-b border-line/70 bg-white px-3">
+      <div className="relative z-10 flex h-12 shrink-0 items-center gap-2 border-b border-line/70 bg-white px-3 shadow-sm">
         <button onClick={back} aria-label="返回上一页" title="返回上一页" className="inline-flex h-8 shrink-0 items-center gap-0.5 rounded-full border border-line bg-white pl-1 pr-2 text-[13px] font-medium"><ChevronLeft size={18} />返回</button>
         <button onClick={() => setPick(true)} aria-label="切换 Agent" className="flex min-w-0 items-center gap-1.5">
           <AgentMark a={agent} size={28} badge={false} />
@@ -291,7 +291,7 @@ export default function AgentChat({ params }: { params?: { id?: string; q?: stri
         <button onClick={() => setHist(true)} aria-label="历史会话" title="历史会话" className="ml-auto grid h-8 w-8 shrink-0 place-items-center rounded-full text-muted hover:bg-chip"><History size={18} /></button>
         <button onClick={() => tab('home')} aria-label="回到日报首页" title="回到日报首页" className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full border border-line bg-white px-3 text-[13px] font-medium"><House size={15} />首页</button>
       </div>
-      <div className="no-scrollbar flex-1 overflow-y-auto px-4 py-4">
+      <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-6 pt-4">
         {!msgs.length && (
           <div className="animate-[fadeup_.3s_ease-out] pt-4 text-center">
             <div className="flex justify-center"><AgentMark a={agent} size={60} /></div>
@@ -329,9 +329,9 @@ export default function AgentChat({ params }: { params?: { id?: string; q?: stri
             </div>
           ))}
         </div>
-        <div ref={end} />
+        <div ref={end} className="h-2" />
       </div>
-      <div className="shrink-0 border-t border-line/70 bg-white px-3 pb-7 pt-2">
+      <div className="relative z-10 shrink-0 border-t border-line/70 bg-white px-3 pb-[calc(0.5rem+env(safe-area-inset-bottom))] pt-2">
         <p className="mb-2 flex items-center gap-1 px-1 text-[11px] text-muted"><UserRound size={12} />按你的画像回答 · 答不了会转真人 Agent · 试试问「股票」</p>
         <div className="flex items-center gap-2">
           <button onClick={() => toast('按住说话（演示）')} aria-label="语音" className="grid h-10 w-10 place-items-center rounded-full text-muted hover:bg-chip"><Mic size={20} /></button>
