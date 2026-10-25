@@ -1,12 +1,24 @@
 import { useState, type ReactNode } from 'react'
-import { ArrowRight, Bell, CalendarClock, CalendarDays, CheckCircle2, ChevronRight, Clock, FileText, Handshake, Headphones, Heart, Info, Lock, MessageCircle, MessageSquareText, Pencil, Plus, Rss, ShieldCheck, Sparkles, Ticket, TrendingUp, Upload, X, XCircle } from 'lucide-react'
-import { Aurora, Avatar, BottomBar, Btn, Card, CertBadge, Confirm, Empty, Field, NavBar, Radar, Section, Sheet, Switch, Tag, useStore, type CertState } from '../ui'
+import { ArrowRight, Bell, CalendarClock, CalendarDays, CheckCircle2, ChevronRight, Clock, FileText, Handshake, Headphones, Heart, Info, Lock, MessageCircle, MessageSquareText, Palette, Pencil, Plus, Rss, ShieldCheck, Sparkles, Ticket, TrendingUp, Upload, X, XCircle } from 'lucide-react'
+import { Aurora, Avatar, BottomBar, Btn, Card, CertBadge, Confirm, Empty, Field, NavBar, Radar, Section, Sheet, Switch, Tag, useStore, type AppTheme, type CertState } from '../ui'
 import { events, messages as initMsgs, providers, radar } from '../data'
 
 type Icon = typeof Ticket
 
+const THEME_OPTIONS: { id: AppTheme; name: string; note: string; swatches: string[] }[] = [
+  { id: 'apple', name: '苹果简洁', note: '清晰留白', swatches: ['#f7f9fc', '#3478f6', '#1e293b'] },
+  { id: 'editorial', name: '商务杂志', note: '纸张与陶土红', swatches: ['#f7f1e8', '#b5543b', '#332b2a'] },
+  { id: 'dark', name: '深色工作台', note: '专注与高对比', swatches: ['#0b1220', '#54d6bf', '#dce7f5'] },
+  { id: 'bento', name: '清新 Bento', note: '薄荷与模块', swatches: ['#f1f8f5', '#179b75', '#173b32'] },
+  { id: 'swiss', name: '瑞士国际主义', note: '黑白与红色', swatches: ['#fafafa', '#e21c2a', '#111111'] },
+  { id: 'warm', name: '温暖人文', note: '杏桃与暖灰', swatches: ['#fff5ed', '#c65a3d', '#4b3029'] },
+  { id: 'premium', name: '精致金融', note: '藏蓝与香槟金', swatches: ['#f3f5f7', '#bd9756', '#11233f'] },
+  { id: 'soft', name: '柔和 Soft UI', note: '雾蓝与柔和阴影', swatches: ['#e9eef6', '#6d7fe8', '#35405d'] },
+]
+
 export default function Me() {
-  const { push, reset, cert, profile, registered, favs, leads, posts, meetings } = useStore()
+  const { push, reset, cert, profile, registered, favs, leads, posts, meetings, theme, setTheme, toast } = useStore()
+  const [themeOpen, setThemeOpen] = useState(false)
   const myPosts = posts.filter((p) => p.mine)
   const pending = myPosts.filter((p) => p.status === '审核中').length
   const upcoming = meetings.filter((m) => m.status === '待确认' || m.status === '已确认').length
@@ -27,6 +39,7 @@ export default function Me() {
     [Heart, '我的收藏', () => push({ name: 'myFavs' }), count(favs.length)],
     [MessageSquareText, '我的留资', () => push({ name: 'myLeads' }), count(leads.length)],
     [Rss, '信息源管理', () => push({ name: 'sources' })],
+    [Palette, '主题风格', () => setThemeOpen(true), <span className="text-[13px] text-muted">{THEME_OPTIONS.find((x) => x.id === theme)?.name}</span>],
     [ShieldCheck, '企业认证', () => push({ name: 'cert' }), <CertBadge state={certState} />],
     [Bell, '消息设置', () => push({ name: 'messages' })],
   ]
@@ -97,6 +110,29 @@ export default function Me() {
       </div>
       <button onClick={() => reset([{ name: 'login' }])} className="mx-auto mt-6 block text-[13px] text-subtle">退出登录 / 重新体验建档</button>
       <p className="mt-2 text-center font-display text-[11px] text-subtle">HIBOSS 海老板 V1.0</p>
+
+      <Sheet open={themeOpen} onClose={() => setThemeOpen(false)} title="主题风格">
+        <div className="grid grid-cols-2 gap-3 pb-2">
+          {THEME_OPTIONS.map((option) => {
+            const active = option.id === theme
+            return (
+              <button
+                key={option.id}
+                onClick={() => { setTheme(option.id); setThemeOpen(false); toast(`已切换为${option.name}`) }}
+                className={`relative overflow-hidden rounded-[18px] border p-3 text-left transition active:scale-[0.98] ${active ? 'border-brand ring-2 ring-brand/15' : 'border-line'}`}
+              >
+                <div className="mb-3 flex h-12 items-end gap-1 rounded-xl p-2" style={{ background: option.swatches[0] }}>
+                  <span className="h-6 w-1/2 rounded-md" style={{ background: option.swatches[1] }} />
+                  <span className="h-4 flex-1 rounded-md" style={{ background: option.swatches[2] }} />
+                </div>
+                <p className="text-[14px] font-semibold">{option.name}</p>
+                <p className="mt-0.5 text-[11px] text-muted">{option.note}</p>
+                {active && <span className="absolute right-3 top-3 grid h-5 w-5 place-items-center rounded-full bg-brand text-[11px] font-bold text-white">✓</span>}
+              </button>
+            )
+          })}
+        </div>
+      </Sheet>
     </div>
   )
 }

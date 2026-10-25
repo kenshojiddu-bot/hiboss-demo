@@ -8,6 +8,7 @@ export type CertState = '未认证' | '审核中' | '已认证' | '未通过'
 export type Profile = { name: string; title: string; city: string; company: string; countries: string[]; topics: string[]; stage: string }
 /** Page surface behind the status bar and nav bar: white reading pages, canvas lists, or the dark ticket. */
 export type Tone = 'light' | 'canvas' | 'dark'
+export type AppTheme = 'apple' | 'editorial' | 'dark' | 'bento' | 'swiss' | 'warm' | 'premium' | 'soft'
 
 type Store = {
   push: (r: Route) => void
@@ -21,6 +22,8 @@ type Store = {
   overlay: HTMLElement | null
   scrolled: boolean
   tone: Tone
+  theme: AppTheme
+  setTheme: (theme: AppTheme) => void
   cert: CertState
   setCert: (c: CertState) => void
   guest: boolean

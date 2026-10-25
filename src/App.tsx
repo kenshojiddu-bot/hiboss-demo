@@ -1,6 +1,6 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Newspaper, CalendarDays, Handshake, LayoutGrid, UserRound, Bell } from 'lucide-react'
-import { Aurora, Btn, Ctx, Orb, PageCtx, ToastView, useStore, type CertState, type Profile, type Route, type Tone } from './ui'
+import { Aurora, Btn, Ctx, Orb, PageCtx, ToastView, useStore, type AppTheme, type CertState, type Profile, type Route, type Tone } from './ui'
 import { meetings as seedMeetings, momentSeeds, myPostSeeds, seedPosts, type Meeting, type Moment, type Post } from './data'
 import Onboard, { Login, Portrait } from './pages/Onboarding'
 import Home, { DailyDetail, Sources } from './pages/Home'
@@ -92,6 +92,15 @@ function GuestBlock() {
 }
 
 export default function App() {
+  const [theme, setTheme] = useState<AppTheme>(() => {
+    try {
+      const saved = localStorage.getItem('hiboss.theme') as AppTheme | null
+      return saved && ['apple', 'editorial', 'dark', 'bento', 'swiss', 'warm', 'premium', 'soft'].includes(saved) ? saved : 'apple'
+    } catch {
+      return 'apple'
+    }
+  })
+  useEffect(() => { try { localStorage.setItem('hiboss.theme', theme) } catch { /* Storage may be unavailable in private browsing. */ } }, [theme])
   const [stack, setStack] = useState<Entry[]>(() => [entry({ name: loadProfile() ? 'home' : 'onboard' })])
   const [motion, setMotion] = useState<Motion>('fade')
   const [toastMsg, setToastMsg] = useState<string | null>(null)
@@ -203,7 +212,7 @@ export default function App() {
   }
 
   const store = {
-    push, replace, reset, back, tab, setParams, toast, overlay, scrolled, tone, cert, setCert, guest, setGuest, registered, register,
+    push, replace, reset, back, tab, setParams, toast, overlay, scrolled, tone, theme, setTheme, cert, setCert, guest, setGuest, registered, register,
     favs, toggleFav: (id: string) => setFavs((f) => (f.includes(id) ? f.filter((x) => x !== id) : [...f, id])),
     leads, addLead: (name: string, note: string) => setLeads((l) => [{ name, note, time: '刚刚' }, ...l]),
     feedback, setFeedback: (id: string, v: 'up' | 'down' | 'hide') => setFb((f) => ({ ...f, [id]: v })),
@@ -220,7 +229,7 @@ export default function App() {
 
   return (
     <Ctx.Provider value={store}>
-      <div data-theme="ocean" className="relative h-dvh overflow-hidden bg-canvas text-ink">
+      <div data-theme={theme} className="relative h-dvh overflow-hidden bg-canvas text-ink">
         <div className="relative h-full w-full overflow-hidden bg-canvas">
 
           {isTab && (
